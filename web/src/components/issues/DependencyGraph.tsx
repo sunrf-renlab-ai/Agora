@@ -2,6 +2,8 @@
 import type { Issue, IssueDependency } from "@agora/shared";
 import Link from "next/link";
 import { useMemo } from "react";
+import { StatusBadge } from "./StatusBadge";
+import { PriorityIcon } from "./pickers/icons";
 
 interface Props {
   issues: Issue[];
@@ -16,10 +18,10 @@ interface Node {
   y: number;
 }
 
-const NODE_W = 220;
-const NODE_H = 80;
-const COL_GAP = 80;
-const ROW_GAP = 24;
+const NODE_W = 240;
+const NODE_H = 108;
+const COL_GAP = 88;
+const ROW_GAP = 28;
 
 /**
  * Workspace-level dependency graph. Renders issues as nodes laid out in
@@ -41,7 +43,7 @@ export function DependencyGraph({ issues, dependencies, workspaceSlug }: Props) 
 
   if (layout.nodes.length === 0) {
     return (
-      <div className="p-8 text-sm text-gray-500">
+      <div className="p-8 text-[13px] text-gray-500">
         No issues in this workspace yet — create some and they'll appear here.
       </div>
     );
@@ -53,11 +55,11 @@ export function DependencyGraph({ issues, dependencies, workspaceSlug }: Props) 
   const idToNode = new Map(layout.nodes.map((n) => [n.issue.id, n]));
 
   return (
-    <div className="overflow-auto p-4 h-full">
+    <div className="h-full overflow-auto p-6">
       <svg
         width={width}
         height={height}
-        className="text-gray-400"
+        className="text-gray-300"
         role="img"
         aria-label="Dependency graph"
       >
@@ -65,7 +67,7 @@ export function DependencyGraph({ issues, dependencies, workspaceSlug }: Props) 
           <marker
             id="arrowhead"
             viewBox="0 0 10 10"
-            refX="9"
+            refX="8"
             refY="5"
             markerWidth="6"
             markerHeight="6"
@@ -82,13 +84,15 @@ export function DependencyGraph({ issues, dependencies, workspaceSlug }: Props) 
           const y1 = from.y + NODE_H / 2;
           const x2 = to.x;
           const y2 = to.y + NODE_H / 2;
+          // Horizontal S-curve: straight diagonals tangle once layers fan
+          // out — a bezier with horizontal tangents at both ends reads as
+          // a clean flow from blocker to blocked.
+          const c = Math.max(36, Math.abs(x2 - x1) * 0.4);
           return (
-            <line
+            <path
               key={e.id}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
+              d={`M ${x1} ${y1} C ${x1 + c} ${y1}, ${x2 - c} ${y2}, ${x2} ${y2}`}
+              fill="none"
               stroke="currentColor"
               strokeWidth={1.5}
               markerEnd="url(#arrowhead)"
@@ -102,18 +106,24 @@ export function DependencyGraph({ issues, dependencies, workspaceSlug }: Props) 
           <Link
             key={n.issue.id}
             href={`/${workspaceSlug}/issues/${n.issue.id}`}
-            className="absolute bg-white border border-gray-200 rounded-md shadow-sm p-2 hover:border-indigo-400 transition-colors"
+            className="group absolute flex flex-col bg-white border border-gray-200 rounded-md px-3 py-2.5 hover:border-gray-300 hover:shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition-all"
             style={{ left: n.x, top: n.y, width: NODE_W, height: NODE_H }}
           >
-            <div className="text-[11px] text-gray-400 font-mono">
-              {/* The list view's identifier is workspace.issue_prefix + number;
-                  here we cheat slightly and show just `#<number>` since we
-                  don't have prefix at hand. The link still works. */}
-              #{n.issue.number} · {n.issue.status}
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-display italic text-[12px] text-gray-400 tabular-nums">
+                {n.issue.identifier}
+              </span>
+              {n.issue.priority !== "none" && (
+                <span className="ml-auto">
+                  <PriorityIcon priority={n.issue.priority} className="size-3.5" />
+                </span>
+              )}
             </div>
-            <div className="text-sm font-medium text-gray-800 line-clamp-2">{n.issue.title}</div>
-            <div className="text-[10px] text-gray-400 mt-0.5">
-              {n.issue.priority !== "none" && <span>{n.issue.priority}</span>}
+            <div className="flex-1 text-[13px] font-medium text-gray-900 line-clamp-2 leading-snug">
+              {n.issue.title}
+            </div>
+            <div className="mt-1.5">
+              <StatusBadge status={n.issue.status} />
             </div>
           </Link>
         ))}

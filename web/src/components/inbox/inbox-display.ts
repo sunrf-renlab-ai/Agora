@@ -10,6 +10,8 @@ const TYPE_LABELS: Record<string, string> = {
   priority_changed: "Priority changed",
   due_date_changed: "Due date changed",
   new_comment: "New comment",
+  issue_status_changed: "Status changed",
+  issue_unblocked: "Unblocked",
   mentioned: "Mentioned",
   review_requested: "Review requested",
   task_completed: "Task completed",

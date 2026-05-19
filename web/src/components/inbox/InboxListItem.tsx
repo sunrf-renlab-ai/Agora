@@ -1,8 +1,8 @@
 "use client";
+import type { InboxItem } from "@agora/shared";
 import { Archive } from "lucide-react";
 import { useState } from "react";
-import type { InboxItem } from "@agora/shared";
-import { typeLabel, typeBadgeColor } from "./inbox-display";
+import { typeBadgeColor, typeLabel } from "./inbox-display";
 
 export function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -41,20 +41,22 @@ export function InboxListItem({ item, selected, onClick, onArchive }: Props) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <span
-            className={`truncate text-[13px] ${item.read ? "text-gray-500" : "font-medium text-gray-900"}`}
+            className={`min-w-0 truncate text-[13px] ${item.read ? "text-gray-500" : "font-medium text-gray-900"}`}
           >
             {item.title}
           </span>
-          <span className="text-[11px] text-gray-400 shrink-0">{timeAgo(item.createdAt)}</span>
+          <span className="shrink-0 text-[11px] text-gray-400 tabular-nums">
+            {timeAgo(item.createdAt)}
+          </span>
         </div>
-        <div className="mt-1 flex items-center gap-2">
+        <div className="mt-1 flex items-center gap-2 min-w-0">
           <span
-            className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium ${typeBadgeColor(item.type)}`}
+            className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-sm px-1.5 py-0.5 text-[10px] font-medium ${typeBadgeColor(item.type)}`}
           >
             {typeLabel(item.type)}
           </span>
           {item.body && (
-            <span className="truncate text-[11px] text-gray-500">{item.body}</span>
+            <span className="min-w-0 truncate text-[12px] text-gray-500">{item.body}</span>
           )}
         </div>
       </div>

@@ -1,11 +1,11 @@
 "use client";
 import { useChatMessages, useSendChatMessage } from "@/hooks/useChatMessages";
+import type { ChatMessage } from "@agora/shared";
 import {
   AssistantRuntimeProvider,
   type ThreadMessageLike,
   useExternalStoreRuntime,
 } from "@assistant-ui/react";
-import type { ChatMessage } from "@agora/shared";
 import { createContext, useContext, useMemo } from "react";
 
 interface Props {
@@ -27,12 +27,18 @@ export interface ChatTraceCtx {
   workspaceId: string | null;
   activeTaskId: string | null;
   isRunning: boolean;
+  // False until the session's messages query has resolved. The thread
+  // suppresses its empty-state greeting while this is false, so opening
+  // an existing conversation doesn't flash the welcome screen during the
+  // brief window where `messages` is still the loading-state `[]`.
+  messagesReady: boolean;
 }
 const ChatTraceContext = createContext<ChatTraceCtx>({
   token: null,
   workspaceId: null,
   activeTaskId: null,
   isRunning: false,
+  messagesReady: false,
 });
 
 export function useChatTrace(): ChatTraceCtx {
@@ -54,7 +60,8 @@ export function useChatTrace(): ChatTraceCtx {
  *   intentionally unset.
  */
 export function AgoraThreadRuntime({ token, workspaceId, sessionId, children }: Props) {
-  const { data: messages = [] } = useChatMessages(token, workspaceId, sessionId);
+  const messagesQuery = useChatMessages(token, workspaceId, sessionId);
+  const messages = useMemo(() => messagesQuery.data ?? [], [messagesQuery.data]);
   const sendMessage = useSendChatMessage(token, workspaceId, sessionId);
 
   // The assistant is "running" whenever the last message is from the user
@@ -97,8 +104,8 @@ export function AgoraThreadRuntime({ token, workspaceId, sessionId, children }: 
   });
 
   const traceCtx = useMemo<ChatTraceCtx>(
-    () => ({ token, workspaceId, activeTaskId, isRunning }),
-    [token, workspaceId, activeTaskId, isRunning],
+    () => ({ token, workspaceId, activeTaskId, isRunning, messagesReady: messagesQuery.isSuccess }),
+    [token, workspaceId, activeTaskId, isRunning, messagesQuery.isSuccess],
   );
 
   return (
@@ -119,7 +126,7 @@ function toThreadMessage(msg: ChatMessage): ThreadMessageLike {
     content: [
       {
         type: "text",
-        text: failed ? (msg.content || msg.failureReason || "(failed)") : msg.content,
+        text: failed ? msg.content || msg.failureReason || "(failed)" : msg.content,
       },
     ],
     createdAt: new Date(msg.createdAt),

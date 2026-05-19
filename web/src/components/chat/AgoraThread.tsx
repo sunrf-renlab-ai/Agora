@@ -28,16 +28,21 @@ import { useChatTrace } from "./AgoraThreadRuntime";
  * just restyle the slots.
  */
 export function AgoraThread() {
+  // Gate the empty-state greeting on the messages query having resolved.
+  // Opening an existing conversation momentarily has `messages === []`
+  // while the fetch is in flight; without this the welcome screen flashes
+  // before the thread renders.
+  const { messagesReady } = useChatTrace();
   return (
     <ThreadPrimitive.Root className="flex flex-col h-full bg-canvas">
       <ThreadPrimitive.Viewport className="flex-1 overflow-y-auto px-6 pt-12 pb-6">
         <div className="max-w-2xl mx-auto flex flex-col gap-7">
-          <ThreadPrimitive.Empty>
-            <EmptyState />
-          </ThreadPrimitive.Empty>
-          <ThreadPrimitive.Messages
-            components={{ UserMessage, AssistantMessage }}
-          />
+          {messagesReady && (
+            <ThreadPrimitive.Empty>
+              <EmptyState />
+            </ThreadPrimitive.Empty>
+          )}
+          <ThreadPrimitive.Messages components={{ UserMessage, AssistantMessage }} />
           <ThreadPrimitive.If running>
             <TaskTrace />
           </ThreadPrimitive.If>
@@ -71,9 +76,8 @@ function EmptyState() {
         How can I help?
       </h1>
       <p className="mt-2 text-[14px] text-gray-500 leading-relaxed max-w-md">
-        Tell me what you want done. I'll draft a plan with subtasks and
-        owners, confirm with you, then file the issues so the team can
-        pick them up.
+        Tell me what you want done. I'll draft a plan with subtasks and owners, confirm with you,
+        then file the issues so the team can pick them up.
       </p>
       <div className="mt-10 flex flex-col gap-2 w-full max-w-md">
         {suggestions.map((s) => (
@@ -90,9 +94,7 @@ function SuggestionChip({ text }: { text: string }) {
   // the native setter so React's controlled-input flow stays intact.
   function handleClick() {
     if (typeof document === "undefined") return;
-    const composer = document.querySelector<HTMLTextAreaElement>(
-      'textarea[data-agora-composer]',
-    );
+    const composer = document.querySelector<HTMLTextAreaElement>("textarea[data-agora-composer]");
     if (!composer) return;
     const nativeSetter = Object.getOwnPropertyDescriptor(
       window.HTMLTextAreaElement.prototype,
@@ -134,9 +136,7 @@ function AssistantMessage() {
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
           <div>
             <p className="font-semibold text-[13px] mb-0.5">Failed</p>
-            <p className="text-[13px] whitespace-pre-wrap leading-relaxed">
-              {meta?.failureReason}
-            </p>
+            <p className="text-[13px] whitespace-pre-wrap leading-relaxed">{meta?.failureReason}</p>
           </div>
         </div>
       </MessagePrimitive.Root>
@@ -218,9 +218,7 @@ function TraceRow({ msg }: { msg: TaskMessage }) {
     const c = msg.content as { text?: string } | null;
     const text = (c?.text ?? "").trim();
     if (text.length === 0) return null;
-    return (
-      <div className="italic text-gray-500 leading-snug whitespace-pre-wrap">{text}</div>
-    );
+    return <div className="italic text-gray-500 leading-snug whitespace-pre-wrap">{text}</div>;
   }
   return null;
 }

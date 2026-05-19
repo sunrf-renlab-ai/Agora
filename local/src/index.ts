@@ -5,6 +5,7 @@ import { loadConfig } from "./config";
 import { runDaemon } from "./daemon";
 import { startDaemonFromPat } from "./daemon-from-pat";
 import { runLogin } from "./login";
+import { restartService, stopService, uninstallService } from "./service";
 import { runSetup } from "./setup";
 
 const program = new Command();
@@ -76,6 +77,33 @@ daemonCmd
     console.log(
       cfg ? `configured: runtime=${cfg.runtimeId}, server=${cfg.serverUrl}` : "not configured",
     );
+  });
+
+daemonCmd
+  .command("stop")
+  .description("Stop the background daemon service (it stays installed)")
+  .action(() => {
+    const r = stopService();
+    for (const s of r.steps) console.log(`  - ${s}`);
+    console.log(`Stopped (${r.supervisor}).`);
+  });
+
+daemonCmd
+  .command("restart")
+  .description("(Re)start the background daemon service")
+  .action(() => {
+    const r = restartService();
+    for (const s of r.steps) console.log(`  - ${s}`);
+    console.log(`Done (${r.supervisor}).`);
+  });
+
+daemonCmd
+  .command("uninstall")
+  .description("Remove the daemon entirely — service, ~/.agora config, and the agorad binary")
+  .action(() => {
+    const r = uninstallService();
+    for (const s of r.steps) console.log(`  - ${s}`);
+    console.log(`agorad uninstalled (${r.supervisor}).`);
   });
 
 await program.parseAsync(process.argv);

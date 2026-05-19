@@ -266,6 +266,7 @@ dApp.post("/api/daemon/runtimes/:runtimeId/tasks/claim", async (c) => {
     autopilotRunRow,
     knowledgeRows,
     teamAgentRows,
+    recentTaskRows,
   ] = await Promise.all([
     db.query.agents.findFirst({ where: eq(agents.id, task.agentId) }),
     task.issueId
@@ -347,6 +348,24 @@ dApp.post("/api/daemon/runtimes/:runtimeId/tasks/claim", async (c) => {
       )
       .orderBy(asc(agents.name))
       .limit(60),
+    // Last 10 completed tasks for THIS agent. Surfaced into CLAUDE.md so
+    // the agent can compare what it's been actually doing against its
+    // own `description` and auto-update via `agora agent update` when
+    // the description is stale. Cheap — index on (agentId, completedAt).
+    db
+      .select({
+        triggerSummary: agentTaskQueue.triggerSummary,
+        completedAt: agentTaskQueue.completedAt,
+      })
+      .from(agentTaskQueue)
+      .where(
+        and(
+          eq(agentTaskQueue.agentId, task.agentId),
+          eq(agentTaskQueue.status, "completed"),
+        ),
+      )
+      .orderBy(desc(agentTaskQueue.completedAt))
+      .limit(10),
   ]);
 
   if (!agent) return jsonError(c, 500, "agent missing");
@@ -551,6 +570,7 @@ dApp.post("/api/daemon/runtimes/:runtimeId/tasks/claim", async (c) => {
     agent: {
       id: agent.id,
       name: agent.name,
+      description: agent.description,
       cliKind: agent.cliKind,
       model: agent.model,
       customEnv: agent.customEnv,
@@ -581,6 +601,12 @@ dApp.post("/api/daemon/runtimes/:runtimeId/tasks/claim", async (c) => {
       )
       .map(({ projectId: _, ...rest }) => rest),
     teamAgents: await enrichTeamAgents(teamAgentRows),
+    recentTasks: recentTaskRows.map((r) => ({
+      triggerSummary: r.triggerSummary,
+      // Defensive: completedAt is non-null because of the status filter
+      // above, but TypeScript can't see through the .where(). Cast safely.
+      completedAt: (r.completedAt ?? new Date()).toISOString(),
+    })),
     taskToken: taskJwt,
     // The agent owner's GitHub token (when they connected GitHub), for
     // the daemon to inject as GH_TOKEN/GITHUB_TOKEN. null when absent.

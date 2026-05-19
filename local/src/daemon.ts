@@ -203,10 +203,12 @@ async function claimAndRun(cfg: DaemonConfig, children: ChildTracker): Promise<v
     const taskContext = {
       agentId: cr.agent.id,
       agentName: cr.agent.name,
+      agentDescription: cr.agent.description,
       agentInstructions: cr.agent.instructions,
       agentSkills: cr.agentSkills,
       knowledgeDocs: cr.knowledgeDocs,
       teamAgents: cr.teamAgents,
+      recentTasks: cr.recentTasks,
       issueId: cr.task.issueId ?? undefined,
       triggerCommentId: cr.task.triggerCommentId ?? undefined,
       chatSessionId: cr.task.chatSessionId ?? undefined,

@@ -34,6 +34,12 @@ export interface ClaimResponse {
   agent: {
     id: string;
     name: string;
+    /** What teammates see in the agent list. The self-description prompt
+     *  shows this to the agent so it can decide whether to call
+     *  `agora agent update <self> --description '...'` after a task to
+     *  reflect what it's actually been doing. Optional for back-compat
+     *  with older servers. */
+    description?: string;
     cliKind: string;
     model: string | null;
     customEnv: Record<string, string>;
@@ -68,6 +74,15 @@ export interface ClaimResponse {
     runtimeOnline: boolean | null;
     loadActive: number;
     loadCap: number;
+  }>;
+  /** Last N completed tasks for THIS agent (most-recent first). Used by
+   *  the daemon to render a "your recent work" block in CLAUDE.md so the
+   *  agent has the raw history it needs to maintain its own description.
+   *  Optional for back-compat with older servers; the renderer no-ops when
+   *  empty. */
+  recentTasks?: Array<{
+    triggerSummary: string | null;
+    completedAt: string;
   }>;
   taskToken: string;
   /** The agent owner's GitHub token, when they connected GitHub. Injected

@@ -8,8 +8,21 @@ import { join } from "node:path";
 export interface TaskContext {
   agentId?: string;
   agentName?: string;
+  /** What teammates see on the agent list. The self-description block in
+   *  CLAUDE.md surfaces this so the agent can compare against its
+   *  recentTasks pattern and decide whether to refine the line via
+   *  `agora agent update`. */
+  agentDescription?: string;
   agentInstructions?: string;
   agentSkills?: Array<{ name: string }>;
+  /** Last 10 completed tasks for this agent (most-recent first). Used to
+   *  feed the self-description nudge — the agent looks at the work
+   *  patterns and decides whether its current description still fits.
+   *  Empty / undefined → renderer omits the self-description block. */
+  recentTasks?: Array<{
+    triggerSummary: string | null;
+    completedAt: string;
+  }>;
   /** Workspace-shared knowledge docs (workspace_knowledge_doc rows). The
    *  daemon-side renderer inlines them into CLAUDE.md so the agent has
    *  the team's documented FAQs / runbooks / decisions in context
@@ -467,6 +480,51 @@ function renderSharingPolicy(parts: string[]): void {
   );
 }
 
+// Agent-maintained self-description. Each agent's `description` field is
+// what teammates (and other agents) see when picking who to assign work
+// to — the routing-decision signal in `agora agent list`. The default
+// description ("Default agent — uses X's local claude_code CLI.") set at
+// onboarding is generic and rarely true after a few real tasks; without
+// help it never updates. This block surfaces the current description +
+// the last few completed tasks and tells the agent to self-update via
+// `agora agent update` when the line is stale.
+//
+// Gated on `recentTasks` having content — brand-new agents (0 completed
+// tasks) get nothing here. Also conservative on cadence: the prompt
+// explicitly says "only update when significantly stale" so agents don't
+// rewrite the line on every run.
+function renderSelfDescription(ctx: TaskContext, parts: string[]): void {
+  const recent = ctx.recentTasks ?? [];
+  if (recent.length === 0) return;
+  if (!ctx.agentId) return;
+  parts.push("## Maintain your self-description\n");
+  const currentLine = ctx.agentDescription?.trim() || "(no description set)";
+  parts.push(
+    `Your \`description\` field — what teammates see in the agent list when deciding who to assign work to — is currently:\n\n> ${currentLine}\n`,
+  );
+  parts.push("Your last completed tasks (most recent first):\n");
+  const summaryRows = recent
+    .slice(0, 10)
+    .map((t) => {
+      const ts = (t.triggerSummary ?? "").trim() || "(no trigger summary)";
+      const single = ts.replace(/\s+/g, " ");
+      const trimmed = single.length > 120 ? `${single.slice(0, 117)}…` : single;
+      return `- ${trimmed}`;
+    })
+    .join("\n");
+  parts.push(`${summaryRows}\n`);
+  parts.push(
+    `If your description **doesn't match this pattern of work** (e.g. it's still the generic onboarding default, or you've drifted into a different specialty), refine it once at the end of this task:\n`,
+  );
+  parts.push(
+    `    agora agent update ${ctx.agentId} --description "one short sentence, present tense, what you're good at"`,
+  );
+  parts.push("");
+  parts.push(
+    "Keep it under ~120 characters. Lead with the verb ('Investigates flaky tests…', 'Triages inbox notifications…', 'Drafts release notes…'). Do NOT rewrite the description from scratch on every task — only when the existing line is meaningfully wrong. If it's already accurate, skip this block entirely.\n",
+  );
+}
+
 function renderSedimentation(parts: string[]): void {
   parts.push("## Sediment what you learned\n");
   parts.push(
@@ -783,6 +841,7 @@ export function buildClaudeMd(ctx: TaskContext): string {
   renderSharingPolicy(parts);
 
   renderSedimentation(parts);
+  renderSelfDescription(ctx, parts);
 
   parts.push("## Workflow\n");
   renderWorkflow(ctx, parts);

@@ -243,4 +243,42 @@ describe("buildClaudeMd", () => {
     expect(md).toContain("completed something reusable");
     expect(md).toContain("hit a pit and climbed out");
   });
+
+  it("renders self-description block with recent tasks when both are provided", () => {
+    const md = buildClaudeMd({
+      agentId: "a-42",
+      agentDescription: "Default agent — uses Sun's local claude_code CLI.",
+      recentTasks: [
+        { triggerSummary: "Fix flaky checkout test", completedAt: "2026-05-18T10:00:00Z" },
+        { triggerSummary: "Review PR #42", completedAt: "2026-05-17T15:00:00Z" },
+        { triggerSummary: "Triage inbox", completedAt: "2026-05-17T09:00:00Z" },
+      ],
+    });
+    expect(md).toContain("## Maintain your self-description");
+    expect(md).toContain("Default agent — uses Sun's local claude_code CLI.");
+    expect(md).toContain("Fix flaky checkout test");
+    expect(md).toContain("Review PR #42");
+    expect(md).toContain("agora agent update a-42 --description");
+  });
+
+  it("omits self-description block when agent has no recent completed tasks", () => {
+    // Fresh agent — never completed anything. The block has no signal to
+    // surface and would just nag the agent to update its description
+    // without any data to base it on.
+    const md = buildClaudeMd({
+      agentId: "a-fresh",
+      agentDescription: "Default agent.",
+      recentTasks: [],
+    });
+    expect(md).not.toContain("## Maintain your self-description");
+  });
+
+  it("handles missing description gracefully — shows '(no description set)'", () => {
+    const md = buildClaudeMd({
+      agentId: "a-1",
+      recentTasks: [{ triggerSummary: "Some work", completedAt: "2026-05-18T10:00:00Z" }],
+    });
+    expect(md).toContain("## Maintain your self-description");
+    expect(md).toContain("(no description set)");
+  });
 });

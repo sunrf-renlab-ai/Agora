@@ -32,6 +32,9 @@ interface Props {
   token: string;
   workspaceId: string;
   issueId: string;
+  /** Current user id — the @-mention list only offers this user's own
+   *  agents, since a human can't invoke another member's agent. */
+  currentUserId: string;
   /** Submit handler. Implementations call `api.createComment`. */
   onSubmit: (content: string) => Promise<void>;
   /** Reply mode: parent comment id, surfaced for future use by callers.
@@ -67,6 +70,7 @@ export function CommentInput({
   token,
   workspaceId,
   issueId,
+  currentUserId,
   onSubmit,
   onCancel,
   autoFocus = false,
@@ -117,7 +121,8 @@ export function CommentInput({
         suggestion: buildSuggestion("@", MemberMentionPluginKey, async (query) => {
           const merged = mergeMentionables(
             membersRef.current as Array<{ user?: { id?: string; name?: string | null } | null }>,
-            agentsRef.current as Array<{ id: string; name: string }>,
+            agentsRef.current as Array<{ id: string; name: string; ownerId: string | null }>,
+            currentUserId,
           );
           const q = query.toLowerCase();
           const matches = merged.filter((it) => it.name.toLowerCase().includes(q)).slice(0, 5);
@@ -367,10 +372,16 @@ export function CommentInput({
 
 function mergeMentionables(
   members: Array<{ user?: { id?: string; name?: string | null } | null }>,
-  agents: Array<{ id: string; name: string }>,
+  agents: Array<{ id: string; name: string; ownerId: string | null }>,
+  currentUserId: string,
 ): Mentionable[] {
   const out: Mentionable[] = [];
-  for (const a of agents) out.push({ id: a.id, name: a.name, kind: "agent" });
+  // Only the current user's own agents are @-mentionable — a human can't
+  // invoke another member's agent (cross-member routing is the
+  // orchestrator's job). Other members stay mentionable as people.
+  for (const a of agents) {
+    if (a.ownerId === currentUserId) out.push({ id: a.id, name: a.name, kind: "agent" });
+  }
   for (const m of members) {
     const u = m.user;
     if (u?.id && u.name) out.push({ id: u.id, name: u.name, kind: "member" });

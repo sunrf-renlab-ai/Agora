@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { db } from "../db/client";
 import { agents } from "../db/schema/index";
+import { CROSS_MEMBER_INVOKE_MESSAGE, canInvokeAgent } from "../lib/agent-invoke";
 import { daemonHub } from "../lib/daemon-hub";
 import { enqueueQuickCreateTask } from "../lib/enqueue";
 import { jsonError } from "../lib/errors";
@@ -16,7 +17,6 @@ app.use(workspaceMiddleware);
 app.post("/api/workspaces/:workspaceId/issues/quick-create", async (c) => {
   const workspaceId = c.get("workspaceId");
   const user = c.get("user");
-  const role = c.get("memberRole");
   const body = await c.req.json();
   const parsed = quickCreateIssueSchema.safeParse(body);
   if (!parsed.success) return jsonError(c, 400, parsed.error.message);
@@ -32,8 +32,10 @@ app.post("/api/workspaces/:workspaceId/issues/quick-create", async (c) => {
   if (!daemonHub.isOnline(agent.runtimeId)) {
     return c.json({ error: "Agent's runtime is offline", code: "agent_unavailable" }, 422);
   }
-  if (agent.visibility === "private" && agent.ownerId !== user.id && role === "member") {
-    return jsonError(c, 403, "Forbidden");
+  // A human may only quick-create through their own agent. The
+  // orchestrator (task JWT → taskAuth) may use any agent.
+  if (!canInvokeAgent(agent, user.id, !!c.get("taskAuth"))) {
+    return jsonError(c, 403, CROSS_MEMBER_INVOKE_MESSAGE);
   }
   const task = await enqueueQuickCreateTask({
     workspaceId,

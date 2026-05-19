@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { db } from "../db/client";
 import { agents, comments, issues, users, workspaces } from "../db/schema/index";
 import { logActivity } from "../lib/activity";
+import { canInvokeAgent } from "../lib/agent-invoke";
 import { enqueueTaskForIssue } from "../lib/enqueue";
 import { forbidden, jsonError, notFound } from "../lib/errors";
 import { hasMentionAll, parseMentions } from "../lib/mention";
@@ -111,8 +112,15 @@ app.post("/api/workspaces/:workspaceId/issues/:issueId/comments", async (c) => {
     const candidates = await db.query.agents.findMany({
       where: and(eq(agents.workspaceId, workspaceId), inArray(agents.id, mentionedAgentIds)),
     });
+    // A human @mentioning an agent may only trigger their own agent —
+    // conscripting another member's agent is the orchestrator's call.
+    // An agent-authored comment (taskAuth) may trigger any mentioned
+    // agent. The comment itself still posts either way; a non-owned
+    // mention just doesn't enqueue a task.
+    const isAgentCall = !!c.get("taskAuth");
     for (const a of candidates) {
       if (!a.runtimeId || a.archivedAt) continue;
+      if (!canInvokeAgent(a, user.id, isAgentCall)) continue;
       try {
         await enqueueTaskForIssue({
           workspaceId,

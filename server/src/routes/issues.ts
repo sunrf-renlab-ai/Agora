@@ -18,6 +18,7 @@ import {
   workspaces,
 } from "../db/schema/index";
 import { logActivity } from "../lib/activity";
+import { CROSS_MEMBER_INVOKE_MESSAGE, canInvokeAgent } from "../lib/agent-invoke";
 import { resolveAssignee } from "../lib/assignee-resolver";
 import { enqueueTaskForIssue } from "../lib/enqueue";
 import { forbidden, jsonError, notFound } from "../lib/errors";
@@ -168,6 +169,20 @@ app.post("/api/workspaces/:workspaceId/issues", async (c) => {
     resolvedAssigneeId = result.matched.id;
   }
 
+  // A human may only assign an issue to an agent they own — running a
+  // task on someone else's agent burns their machine + model credentials.
+  // Cross-member agent routing is the orchestrator's job; it acts via a
+  // task JWT, so taskAuth is set and the check passes.
+  if (resolvedAssigneeKind === "agent" && resolvedAssigneeId) {
+    const assigneeAgent = await db.query.agents.findFirst({
+      where: and(eq(agents.id, resolvedAssigneeId), eq(agents.workspaceId, workspaceId)),
+    });
+    if (!assigneeAgent) return notFound(c, "Agent");
+    if (!canInvokeAgent(assigneeAgent, user.id, !!taskAuth)) {
+      return jsonError(c, 403, CROSS_MEMBER_INVOKE_MESSAGE);
+    }
+  }
+
   // Atomically increment issue counter and get new number
   const [updated] = await db
     .update(workspaces)
@@ -287,6 +302,17 @@ app.patch("/api/workspaces/:workspaceId/issues/:issueId", async (c) => {
     }
     patchedAssigneeKind = result.matched.kind;
     patchedAssigneeId = result.matched.id;
+  }
+
+  // A human may only (re)assign to an agent they own — see POST handler.
+  if (patchedAssigneeKind === "agent" && patchedAssigneeId) {
+    const assigneeAgent = await db.query.agents.findFirst({
+      where: and(eq(agents.id, patchedAssigneeId), eq(agents.workspaceId, workspaceId)),
+    });
+    if (!assigneeAgent) return notFound(c, "Agent");
+    if (!canInvokeAgent(assigneeAgent, user.id, !!c.get("taskAuth"))) {
+      return jsonError(c, 403, CROSS_MEMBER_INVOKE_MESSAGE);
+    }
   }
 
   const update: Partial<typeof issues.$inferInsert> = { updatedAt: new Date() };
@@ -422,6 +448,11 @@ app.post("/api/workspaces/:workspaceId/issues/:issueId/rerun", async (c) => {
     where: and(eq(agents.id, issue.assigneeId), eq(agents.workspaceId, workspaceId)),
   });
   if (!agent) return notFound(c, "Agent");
+  // Rerun re-enqueues a task on the assigned agent — same boundary as a
+  // fresh assignment: a human may only rerun their own agent.
+  if (!canInvokeAgent(agent, c.get("user").id, !!c.get("taskAuth"))) {
+    return jsonError(c, 403, CROSS_MEMBER_INVOKE_MESSAGE);
+  }
   if (!agent.runtimeId || agent.archivedAt) {
     return jsonError(c, 400, "Agent has no active runtime");
   }

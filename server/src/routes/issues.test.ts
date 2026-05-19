@@ -194,12 +194,17 @@ describe("POST /api/workspaces/:workspaceId/issues with assigneeName", () => {
     ]);
     const [a1] = await db
       .insert(agents)
-      .values({ workspaceId, name: "QA Agent", cliKind: "claude_code" })
+      .values({ workspaceId, name: "QA Agent", cliKind: "claude_code", ownerId: userIdOwner })
       .returning();
     agentIdQa = a1!.id;
     const [a2] = await db
       .insert(agents)
-      .values({ workspaceId, name: "Backup Agent", cliKind: "claude_code" })
+      .values({
+        workspaceId,
+        name: "Backup Agent",
+        cliKind: "claude_code",
+        ownerId: userIdOwner,
+      })
       .returning();
     agentIdBackup = a2!.id;
     const pat = generatePat();
@@ -352,6 +357,7 @@ describe("POST /api/workspaces/:workspaceId/issues/:issueId/rerun", () => {
         name: "Rerun Agent",
         runtimeId,
         cliKind: "claude_code",
+        ownerId: userId,
       })
       .returning();
     // biome-ignore lint/style/noNonNullAssertion: test setup
@@ -364,6 +370,7 @@ describe("POST /api/workspaces/:workspaceId/issues/:issueId/rerun", () => {
         runtimeId,
         cliKind: "claude_code",
         archivedAt: new Date(),
+        ownerId: userId,
       })
       .returning();
     // biome-ignore lint/style/noNonNullAssertion: test setup
@@ -374,6 +381,7 @@ describe("POST /api/workspaces/:workspaceId/issues/:issueId/rerun", () => {
         workspaceId,
         name: "Runtimeless Agent",
         cliKind: "claude_code",
+        ownerId: userId,
         // runtimeId left null
       })
       .returning();
@@ -797,5 +805,135 @@ describe("POST /api/workspaces/:workspaceId/issues/:issueId/escalate", () => {
   test("missing reason → 400", async () => {
     const res = await escalate({});
     expect(res.status).toBe(400);
+  });
+});
+
+// ===== Human agent-invocation boundary =====
+//
+// A human may only assign an issue to / invoke an agent they own.
+// Routing work to another member's agent runs it on that member's
+// machine — that's the orchestrator's job, not a human's dropdown pick.
+
+describe("human can only assign issues to their own agent", () => {
+  let workspaceId: string;
+  let ownerId: string;
+  let otherUserId: string;
+  let ownAgentId: string;
+  let othersAgentId: string;
+  let ownerPat: string;
+
+  beforeEach(async () => {
+    const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e9)}`;
+    const [owner] = await db
+      .insert(users)
+      .values({ email: `inv-owner-${stamp}@x`, name: "Inv Owner" })
+      .returning();
+    ownerId = owner!.id;
+    const [other] = await db
+      .insert(users)
+      .values({ email: `inv-other-${stamp}@x`, name: "Inv Other" })
+      .returning();
+    otherUserId = other!.id;
+    const [w] = await db
+      .insert(workspaces)
+      .values({ name: "IV", slug: `iv-${stamp}`, issuePrefix: "IV", issueCounter: 0 })
+      .returning();
+    workspaceId = w!.id;
+    await db.insert(members).values([
+      { workspaceId, userId: ownerId, role: "owner" },
+      { workspaceId, userId: otherUserId, role: "member" },
+    ]);
+    const [a1] = await db
+      .insert(agents)
+      .values({ workspaceId, name: "Owner's agent", cliKind: "claude_code", ownerId })
+      .returning();
+    ownAgentId = a1!.id;
+    const [a2] = await db
+      .insert(agents)
+      .values({
+        workspaceId,
+        name: "Other's agent",
+        cliKind: "claude_code",
+        ownerId: otherUserId,
+      })
+      .returning();
+    othersAgentId = a2!.id;
+    const pat = generatePat();
+    await db.insert(personalAccessTokens).values({
+      userId: ownerId,
+      name: "test",
+      tokenHash: pat.hash,
+      tokenPrefix: pat.prefix,
+    });
+    ownerPat = pat.token;
+  });
+
+  afterEach(async () => {
+    await db.execute(sql`DELETE FROM workspace WHERE id = ${workspaceId}`);
+    await db.execute(sql`DELETE FROM "user" WHERE id = ${ownerId}`);
+    await db.execute(sql`DELETE FROM "user" WHERE id = ${otherUserId}`);
+  });
+
+  function createIssue(body: unknown) {
+    return createApp().request(`/api/workspaces/${workspaceId}/issues`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${ownerPat}`,
+        "X-Workspace-ID": workspaceId,
+      },
+      body: JSON.stringify(body),
+    });
+  }
+
+  test("assigning a new issue to your own agent is allowed", async () => {
+    const res = await createIssue({
+      title: "mine",
+      assigneeKind: "agent",
+      assigneeId: ownAgentId,
+    });
+    expect(res.status).toBe(201);
+    const json = (await res.json()) as { assigneeId: string };
+    expect(json.assigneeId).toBe(ownAgentId);
+  });
+
+  test("assigning a new issue to another member's agent → 403", async () => {
+    const res = await createIssue({
+      title: "not mine",
+      assigneeKind: "agent",
+      assigneeId: othersAgentId,
+    });
+    expect(res.status).toBe(403);
+  });
+
+  test("PATCH reassigning to another member's agent → 403", async () => {
+    const created = await createIssue({ title: "to reassign" });
+    expect(created.status).toBe(201);
+    const { id } = (await created.json()) as { id: string };
+    const res = await createApp().request(`/api/workspaces/${workspaceId}/issues/${id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${ownerPat}`,
+        "X-Workspace-ID": workspaceId,
+      },
+      body: JSON.stringify({ assigneeKind: "agent", assigneeId: othersAgentId }),
+    });
+    expect(res.status).toBe(403);
+  });
+
+  test("PATCH reassigning to your own agent is allowed", async () => {
+    const created = await createIssue({ title: "to reassign mine" });
+    const { id } = (await created.json()) as { id: string };
+    const res = await createApp().request(`/api/workspaces/${workspaceId}/issues/${id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${ownerPat}`,
+        "X-Workspace-ID": workspaceId,
+      },
+      body: JSON.stringify({ assigneeKind: "agent", assigneeId: ownAgentId }),
+    });
+    expect(res.status).toBe(200);
   });
 });

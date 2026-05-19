@@ -16,16 +16,6 @@ import { useMemo, useState } from "react";
 import { IssueCard } from "./IssueCard";
 import { StatusIcon } from "./pickers/icons";
 
-const STATUS_ZH: Record<IssueStatus, string> = {
-  backlog: "待规划",
-  todo: "待办",
-  in_progress: "进行中",
-  in_review: "审核中",
-  done: "已完成",
-  blocked: "已阻塞",
-  cancelled: "已取消",
-};
-
 const STATUS_KEYS = new Set<string>([
   "backlog",
   "todo",
@@ -305,7 +295,7 @@ function KanbanColumn({
           {STATUS_KEYS.has(columnKey) && (
             <StatusIcon status={columnKey as IssueStatus} className="size-3.5" />
           )}
-          {STATUS_KEYS.has(columnKey) ? STATUS_ZH[columnKey as IssueStatus] : label}
+          {label}
         </span>
         <span className="font-display italic text-[12px] text-gray-400 tabular-nums ml-auto">
           {issues.length}

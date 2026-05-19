@@ -9,7 +9,7 @@ import {
 } from "@assistant-ui/react";
 import { AlertCircle, ArrowUp, Square, Wrench } from "lucide-react";
 import { useMemo } from "react";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useChatTrace } from "./AgoraThreadRuntime";
 
@@ -149,9 +149,7 @@ function AssistantMessage() {
   return (
     <MessagePrimitive.Root className="flex justify-start">
       <div className="max-w-[90%] text-[14px] text-gray-900 leading-[1.7]">
-        <div className="prose prose-sm prose-gray max-w-none prose-headings:font-semibold prose-headings:text-gray-900 prose-p:my-2 prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-md prose-pre:text-[12.5px] prose-code:text-[12.5px] prose-code:bg-gray-100 prose-code:rounded prose-code:px-1 prose-code:py-0.5 prose-code:before:content-none prose-code:after:content-none prose-a:text-indigo-700 prose-a:no-underline hover:prose-a:underline prose-img:hidden">
-          <MessagePrimitive.Parts components={{ Text: TextPart }} />
-        </div>
+        <MessagePrimitive.Parts components={{ Text: TextPart }} />
         {meta?.elapsedMs != null && (
           <p className="mt-1.5 text-[10.5px] text-gray-400 tabular-nums font-mono">
             {(meta.elapsedMs / 1000).toFixed(1)}s
@@ -295,9 +293,68 @@ function summarizeToolInput(name: string, input: unknown): string {
   return oneLine.length > 80 ? `${oneLine.slice(0, 77)}…` : oneLine;
 }
 
+/**
+ * Tailwind has no typography plugin wired in, so `prose` is a no-op and
+ * Preflight flattens headings/lists. Style every markdown element
+ * explicitly here so the agent's reply renders real hierarchy — section
+ * headings, bullets, emphasis — instead of one flat paragraph.
+ */
+const mdComponents: Components = {
+  h1: ({ children }) => (
+    <h1 className="text-[17px] font-semibold text-gray-900 mt-4 mb-2 first:mt-0">{children}</h1>
+  ),
+  h2: ({ children }) => (
+    <h2 className="text-[15px] font-semibold text-gray-900 mt-4 mb-1.5 first:mt-0">{children}</h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="text-[13px] font-semibold text-gray-700 mt-3 mb-1 first:mt-0">{children}</h3>
+  ),
+  p: ({ children }) => <p className="my-2 first:mt-0 last:mb-0">{children}</p>,
+  ul: ({ children }) => <ul className="list-disc pl-5 my-2 space-y-1">{children}</ul>,
+  ol: ({ children }) => <ol className="list-decimal pl-5 my-2 space-y-1">{children}</ol>,
+  li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+  em: ({ children }) => <em className="italic">{children}</em>,
+  a: ({ href, children }) => (
+    <a href={href} target="_blank" rel="noreferrer" className="text-indigo-700 hover:underline">
+      {children}
+    </a>
+  ),
+  code: ({ className, children }) =>
+    className ? (
+      <code className="font-mono text-[12.5px]">{children}</code>
+    ) : (
+      <code className="font-mono text-[12px] bg-gray-100 text-gray-800 rounded px-[3px] py-0.5">
+        {children}
+      </code>
+    ),
+  pre: ({ children }) => (
+    <pre className="bg-gray-900 text-gray-100 rounded-md p-3 my-2 text-[12.5px] leading-relaxed overflow-x-auto">
+      {children}
+    </pre>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-gray-200 pl-3 my-2 text-gray-600">
+      {children}
+    </blockquote>
+  ),
+  hr: () => <hr className="border-gray-200 my-3" />,
+  table: ({ children }) => (
+    <div className="my-2 overflow-x-auto">
+      <table className="w-full border-collapse text-[13px]">{children}</table>
+    </div>
+  ),
+  th: ({ children }) => (
+    <th className="border border-gray-200 bg-gray-50 px-2 py-1 text-left font-semibold">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => <td className="border border-gray-200 px-2 py-1 align-top">{children}</td>,
+};
+
 function TextPart({ text }: { text: string }) {
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
+    <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml components={mdComponents}>
       {text}
     </ReactMarkdown>
   );

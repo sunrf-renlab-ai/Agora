@@ -1,0 +1,45 @@
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build artifacts
+dist/
+build/
+out/
+.next/
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+*.lcov
+*.cov
+
+# Design docs (internal only)
+docs/design/
+
+# Supabase
+supabase/.branches
+supabase/.temp
+.gstack/
+.*.bun-build
+local/dist/
+
+# E2E
+e2e/fixtures/agora-state.json
+e2e/test-results/
+e2e/report/

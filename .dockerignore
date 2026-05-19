@@ -1,0 +1,52 @@
+# Don't ship workspace node_modules — `bun install` runs inside the
+# image and resolves a clean tree.
+node_modules
+**/node_modules
+
+# Build outputs.
+**/.next
+**/dist
+**/build
+**/out
+**/*.tsbuildinfo
+
+# Drop the source of workspaces the runtime image doesn't need. We
+# still let `web/package.json`, `local/package.json`, and
+# `cli/package.json` through (via the negations below) so bun can
+# resolve the workspace graph during `bun install`.
+e2e
+web/**
+!web/package.json
+# Need local/ source for the daemon-bins build stage (cross-compiled
+# agorad binaries served by /api/cli/download/<target>).
+cli/**
+!cli/package.json
+docs
+
+# Local secrets and editor cruft.
+**/.env
+**/.env.*
+!**/.env.production.example
+!**/.env.example
+.git
+.github
+.gitignore
+.gstack
+.idea
+.vscode
+.DS_Store
+
+# Logs and coverage.
+*.log
+logs
+coverage
+*.lcov
+*.cov
+
+# Misc test artifacts.
+playwright-report
+test-results
+
+# Supabase local config (not used in the container).
+supabase/.branches
+supabase/.temp

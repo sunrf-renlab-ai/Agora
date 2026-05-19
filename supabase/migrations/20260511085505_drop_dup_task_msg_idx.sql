@@ -1,0 +1,1 @@
+DROP INDEX "task_message_task_seq_idx";

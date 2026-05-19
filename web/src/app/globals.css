@@ -1,0 +1,317 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital@0;1&display=swap");
+
+@source "../**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+@source "../app/**/*.{ts,tsx}";
+
+/* =============================================================================
+ * Agora light-mode design system.
+ *
+ * Strategy: define Agora's --background / --foreground / --primary etc. as
+ * canonical tokens, then alias Tailwind's `gray-*` and `indigo-*` color
+ * scales onto Agora's zinc-grayscale + brand-blue palettes so the entire
+ * codebase's `bg-gray-100` / `text-indigo-600` / `border-gray-200` upgrades
+ * in place without touching components.
+ * ============================================================================= */
+
+@theme inline {
+  /* Agora's semantic tokens. */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-priority: var(--priority);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+@theme {
+  /* Fonts: Inter sans, Geist Mono, Source Serif 4 — the stack is tuned so
+     glyph metrics, kerning and CJK fallbacks stay consistent. */
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei",
+    "Noto Sans CJK SC", sans-serif;
+  --font-mono:
+    "Geist Mono", "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+
+  /* Tailwind `gray-*` aliased to Agora's zinc-grayscale (hue ≈ 286).
+     Hand-derived design tokens at 50…950. */
+  --color-gray-50: oklch(0.985 0 0);
+  --color-gray-100: oklch(0.967 0.001 286.375);
+  --color-gray-200: oklch(0.92 0.004 286.32);
+  --color-gray-300: oklch(0.871 0.006 286.286);
+  --color-gray-400: oklch(0.705 0.015 286.067);
+  --color-gray-500: oklch(0.552 0.016 285.938);
+  --color-gray-600: oklch(0.442 0.017 285.786);
+  --color-gray-700: oklch(0.37 0.013 285.805);
+  --color-gray-800: oklch(0.274 0.006 286.033);
+  --color-gray-900: oklch(0.21 0.006 285.885);
+  --color-gray-950: oklch(0.141 0.005 285.823);
+
+  /* Tailwind `indigo-*` aliased to Agora's brand blue (hue 255, c≈0.16).
+     Existing `bg-indigo-600` / `text-indigo-700` / `border-indigo-200` etc.
+     auto-upgrade to the brand palette. */
+  --color-indigo-50: oklch(0.97 0.014 255);
+  --color-indigo-100: oklch(0.93 0.04 255);
+  --color-indigo-200: oklch(0.86 0.08 255);
+  --color-indigo-300: oklch(0.78 0.12 255);
+  --color-indigo-400: oklch(0.66 0.15 255);
+  --color-indigo-500: oklch(0.6 0.16 255);
+  --color-indigo-600: oklch(0.55 0.16 255); /* THE brand */
+  --color-indigo-700: oklch(0.48 0.15 255);
+  --color-indigo-800: oklch(0.4 0.13 255);
+  --color-indigo-900: oklch(0.32 0.1 255);
+
+  /* Radius base. */
+  --radius: 0.625rem;
+}
+
+/* =============================================================================
+ * Agora's light-mode :root token set.
+ * ============================================================================= */
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: oklch(0.21 0.006 285.885);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.95 0.002 286.375);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: oklch(0.705 0.015 286.067);
+  --brand: oklch(0.55 0.16 255);
+  --brand-foreground: oklch(0.985 0 0);
+  --success: oklch(0.55 0.16 145);
+  --warning: oklch(0.75 0.16 85);
+  --info: oklch(0.55 0.18 250);
+  --priority: oklch(0.65 0.18 50);
+  --scrollbar-thumb: oklch(0 0 0 / 10%);
+  --scrollbar-thumb-hover: oklch(0 0 0 / 18%);
+  --scrollbar-track: transparent;
+}
+
+/* =============================================================================
+ * Base styles — light-mode-only subset.
+ * ============================================================================= */
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+
+  html {
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01" on, "cv11" on;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Auto-insert 1/4em between CJK + Latin. */
+    text-autospace: ideograph-alpha ideograph-numeric;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  /* Default border color follows --border instead of currentColor (Tailwind v4
+     flipped this). Explicit utility classes still win. */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--brand) 20%, transparent);
+    color: var(--brand);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+    font-feature-settings: "lnum" on, "tnum" on;
+    letter-spacing: -0.01em;
+  }
+
+  body,
+  table,
+  [class*="tabular"] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.015em;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* =============================================================================
+ * Compatibility utilities — kept so existing classes (`bg-canvas`,
+ * `bg-surface`, `text-muted`, `border-default`) continue to render. They
+ * now resolve onto Agora's white-canvas tokens.
+ * ============================================================================= */
+/* Refined entrance animations — used on the workspace home composer
+ * and any other surface that benefits from a single, choreographed
+ * page-load reveal. CSS-only so the cost is just a few keyframes.
+ *
+ * Use animation-delay (inline style) to stagger children. Respects the
+ * user's reduced-motion preference automatically via the media query
+ * below — animations skip rather than degrade. */
+@keyframes agoraFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes agoraFadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton shimmer — gradient sweep over a neutral base. Used by the
+ * Skeleton primitive to communicate "data is loading" without flashing
+ * raw "Loading…" text. Easing + 1.4s loop is slow enough to read as
+ * fabric-like rather than nervous. */
+@keyframes agoraShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@layer utilities {
+  .agora-fade-in {
+    animation: agoraFadeIn 480ms ease-out both;
+  }
+  .agora-fade-in-up {
+    animation: agoraFadeInUp 520ms ease-out both;
+  }
+  .agora-skeleton {
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      oklch(1 0 0 / 0.55) 40%,
+      oklch(1 0 0 / 0.55) 60%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: agoraShimmer 1.4s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agora-fade-in,
+  .agora-fade-in-up,
+  .agora-skeleton {
+    animation: none !important;
+  }
+}
+
+@layer utilities {
+  .bg-canvas {
+    background: var(--background);
+  }
+  .bg-surface {
+    background: var(--card);
+  }
+  .bg-companion {
+    background: var(--info);
+  }
+  .bg-companion-soft {
+    background: color-mix(in oklab, var(--info) 12%, transparent);
+  }
+  .text-companion {
+    color: var(--info);
+  }
+  .text-muted {
+    color: var(--muted-foreground);
+  }
+  .text-faint {
+    color: oklch(0.78 0.012 286);
+  }
+  .border-default {
+    border-color: var(--border);
+  }
+  .border-strong {
+    border-color: oklch(0.85 0.006 286);
+  }
+  .divide-hairline > * + * {
+    border-top: 1px solid var(--border);
+  }
+}

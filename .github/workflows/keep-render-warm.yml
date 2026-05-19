@@ -1,0 +1,26 @@
+name: keep render warm
+
+# Render Free sleeps the agora-server container after 15 min of no
+# requests. First request after sleep waits 30-60 s for the container
+# and bun runtime to boot. Pinging /healthz every 13 min keeps it warm.
+#
+# GitHub Actions cron minimum frequency is 5 min; we use 13 to spread
+# the load (round numbers like */15 are heavily contended on the GH
+# scheduler).
+#
+# URL hardcoded — it isn't sensitive and a missing repo secret silently
+# broke the warmer before. Update when the Render service slug changes.
+
+on:
+  schedule:
+    - cron: "*/13 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      # `|| true` so a single 5xx during cold-start doesn't fail the
+      # workflow — Render commonly returns 502/503 mid-boot for ~10 s
+      # before the bun process binds the port.
+      - run: curl -sS --max-time 90 "https://agora-server-ub50.onrender.com/healthz" || true

@@ -1,0 +1,22 @@
+{
+  "name": "agora",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": ["server", "web", "local", "shared", "cli"],
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "dev:server": "bun run --filter server dev",
+    "dev:web": "bun run --filter web dev",
+    "check": "biome check .",
+    "format": "biome format --write .",
+    "test": "bun run --filter '*' test",
+    "db:generate": "cd server && bun drizzle-kit generate",
+    "db:migrate": "cd server && bun drizzle-kit migrate",
+    "db:studio": "cd server && bun drizzle-kit studio"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@playwright/test": "1.59.1",
+    "typescript": "^5.7.3"
+  }
+}

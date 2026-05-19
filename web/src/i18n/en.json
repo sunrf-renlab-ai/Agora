@@ -1,0 +1,348 @@
+{
+  "runtimes": {
+    "backToList": "Back to runtimes",
+    "detail": {
+      "notFound": "Runtime not found",
+      "header": {
+        "online": "Online",
+        "offline": "Offline",
+        "lastSeen": "Last seen",
+        "version": "Version"
+      },
+      "status": {
+        "title": "Status",
+        "detectedClis": "Detected CLIs",
+        "models": "Models",
+        "machine": "Machine"
+      },
+      "agents": {
+        "title": "Agents using this runtime",
+        "empty": "None",
+        "concurrentTasks": "Concurrent tasks"
+      },
+      "activity": {
+        "title": "Activity",
+        "empty": "No activity"
+      },
+      "usage": {
+        "title": "Usage",
+        "empty": "No data"
+      }
+    }
+  },
+  "login": {
+    "eyebrow": "FOR TEAMS",
+    "tagline": "Every teammate brings their AI to one workspace",
+    "subtitle": "Connect the AI CLIs you already run — Claude, Codex, Gemini, OpenClaw, or Hermes.",
+    "featureByoAi": "Bring your own AI",
+    "featureOneBoard": "Humans + agents, one board",
+    "featureScope": "Issues · Projects · Autopilots",
+    "inviteBanner": "You were invited to a workspace. Sign in (or create an account) and we'll take you to the invitation.",
+    "srHeading": "Sign in",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "continue": "Continue",
+    "loading": "Loading…",
+    "autoCreateHint": "New email? We'll create your account automatically."
+  },
+  "sidebar": {
+    "home": "Chat with agents",
+    "inbox": "Inbox",
+    "myIssues": "My Issues",
+    "pinned": "Pinned",
+    "workspace": "Workspace",
+    "config": "Config",
+    "issues": "Issues",
+    "knowledge": "Knowledge",
+    "projects": "Projects",
+    "autopilots": "Autopilots",
+    "agents": "Agents",
+    "runtimes": "Runtimes",
+    "skills": "Skills",
+    "settings": "Settings",
+    "help": "Help",
+    "createWorkspace": "Create workspace",
+    "switchWorkspace": "Search workspaces…"
+  },
+  "issues": {
+    "title": "Issues",
+    "myTitle": "My Issues",
+    "new": "+ New Issue",
+    "noneYet": "No issues yet",
+    "createFirst": "Create your first issue to get started.",
+    "createCta": "Create issue",
+    "noneAssigned": "No issues assigned to you",
+    "scopeAll": "All",
+    "scopeMember": "Members",
+    "scopeAgent": "Agents",
+    "filters": {
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "project": "Project",
+      "labels": "Labels",
+      "clearAll": "Clear filters"
+    },
+    "batch": {
+      "selectedCount": "{count} selected",
+      "status": "Change status",
+      "priority": "Change priority",
+      "assignee": "Reassign",
+      "delete": "Delete",
+      "clear": "Clear",
+      "cancel": "Cancel",
+      "deleteConfirm": "Delete {count} selected issues?",
+      "updated": "Updated {count} issues",
+      "updateFailed": "Update failed",
+      "deleted": "Deleted {count} issues",
+      "deleteFailed": "Delete failed"
+    },
+    "executionLogs": {
+      "title": "Execution logs",
+      "empty": "No execution runs yet",
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "started": "Started",
+      "finished": "Finished",
+      "inProgress": "In progress",
+      "noDetailedLogs": "Detailed logs not yet available",
+      "messagesLoading": "Loading messages…",
+      "messagesEmpty": "No agent messages were recorded for this run.",
+      "messagesEmptyRunning": "Waiting for the agent's first message…",
+      "replyAffordance": "Reply",
+      "replyPlaceholder": "Reply to {agent}… (⌘↵ to send)",
+      "replySend": "Send",
+      "rerun": "Re-run",
+      "status": {
+        "queued": "Queued",
+        "dispatched": "Dispatched",
+        "running": "Running",
+        "completed": "Completed",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "triggers": {
+        "assignee": "Assigned",
+        "mention": "Mentioned",
+        "on_comment": "On comment",
+        "rerun": "Rerun",
+        "quick_create": "Quick create",
+        "autopilot": "Autopilot",
+        "other": "Other"
+      },
+      "error": {
+        "title": "Error"
+      }
+    }
+  },
+  "createDialog": {
+    "title": "Create Issue",
+    "ai": "AI",
+    "manual": "Manual",
+    "switchAi": "Switch to AI",
+    "switchManual": "Switch to manual",
+    "createdBy": "Created by",
+    "describeAgent": "Describe what you want the agent to do",
+    "describePlaceholder": "Tell the agent what to do…",
+    "issueTitle": "Issue title",
+    "description": "Description",
+    "descriptionPlaceholder": "Description (optional)",
+    "status": "Status",
+    "priority": "Priority",
+    "attachFiles": "+ Attach files",
+    "removeFile": "Remove {name}",
+    "keepOpen": "Keep open after submit",
+    "submitHint": "⌘↵ to submit",
+    "cancel": "Cancel",
+    "create": "Create",
+    "sending": "Sending…",
+    "uploading": "Uploading…",
+    "uploadFailed": "Upload failed: {name}",
+    "createFailed": "Failed to create issue",
+    "noAgents": "No reachable agents found. Switch to manual or create an agent first.",
+    "agentSuccess": "Agent is on it — issue will appear shortly",
+    "ariaCreateWithAgent": "Create with agent",
+    "ariaCreateIssue": "Create issue",
+    "ariaCollapse": "Collapse",
+    "ariaExpand": "Expand",
+    "ariaClose": "Close",
+    "ariaRemoveParent": "Remove parent",
+    "ariaRemoveSubIssue": "Remove sub-issue {label}",
+    "ariaMoreOptions": "More options",
+    "workspace": "Workspace",
+    "createManually": "Create manually",
+    "createWithAgent": "Create with agent",
+    "descriptionPlaceholderManual": "Add description… (Markdown supported)",
+    "agentPromptPlaceholder": "Tell the agent what to do, e.g. \"fix the inbox loading slowness in the Web project\"",
+    "subIssueOf": "Sub-issue of {parent}",
+    "subIssueLabel": "Sub-issue: {label}",
+    "changeParent": "Change parent…",
+    "setParentIssue": "Set parent issue…",
+    "addSubIssue": "Add sub-issue…",
+    "createAnother": "Create another",
+    "creating": "Creating…",
+    "createIssueButton": "Create Issue",
+    "setParentTitle": "Set parent issue",
+    "setParentDescription": "Search for an issue to set as the parent",
+    "addSubIssueTitle": "Add sub-issue",
+    "addSubIssueDescription": "Search for an issue to add as a sub-issue",
+    "linkSubIssuesFailed": "Failed to link sub-issues",
+    "linkSomeSubIssuesFailed": "Failed to link {failed} of {total} sub-issues",
+    "issueCreated": "Issue created",
+    "viewIssue": "View issue →",
+    "pickAgent": "Pick an agent…",
+    "noAgentsShort": "No reachable agents. Connect a daemon, then come back.",
+    "agentSentToast": "Sent to agent. You'll get an inbox notification when it's done.",
+    "submitFailedRetry": "Failed to submit. Try again."
+  },
+  "comments": {
+    "input": {
+      "placeholder": "Leave a comment...",
+      "submit": "Comment",
+      "cancel": "Cancel",
+      "attachFile": "Attach file",
+      "mention": {
+        "member": "People",
+        "agent": "Agents",
+        "issue": "Issues"
+      }
+    }
+  },
+  "settings": {
+    "language": "Language",
+    "english": "English",
+    "chinese": "中文",
+    "title": "Settings",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "tokens": "Tokens",
+    "feedback": "Feedback",
+    "members": "Workspace members",
+    "email": "Email",
+    "name": "Name",
+    "avatarUrl": "Avatar URL",
+    "save": "Save changes",
+    "connections": "Connections"
+  },
+  "issueDetail": {
+    "backToIssues": "← Back to issues",
+    "sidebarHeading": "Properties",
+    "fields": {
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "creator": "Creator",
+      "created": "Created",
+      "labels": "Labels"
+    },
+    "addLabel": "+ Label",
+    "pinToSidebar": "Pin to sidebar",
+    "dependencies": {
+      "title": "Dependencies",
+      "blocks": "Blocks",
+      "blockedBy": "Blocked by",
+      "related": "Related",
+      "none": "None",
+      "pickIssue": "— pick issue —",
+      "add": "Add",
+      "addLink": "Add a dependency",
+      "cancel": "Cancel"
+    },
+    "attachments": "Attachments",
+    "attachmentList": {
+      "chooseFiles": "Choose files",
+      "orDropHere": "or drop here"
+    },
+    "tabs": {
+      "comments": "Comments ({count})",
+      "activity": "Activity ({count})",
+      "executionLogs": "Execution logs"
+    },
+    "timeline": {
+      "title": "Activity"
+    },
+    "subscribe": {
+      "subscribed": "Subscribed to issue",
+      "unsubscribed": "Unsubscribed from issue",
+      "failed": "Failed to update subscription",
+      "toggleAriaSubscribe": "Subscribe to updates",
+      "toggleAriaUnsubscribe": "Unsubscribe"
+    },
+    "properties": {
+      "attributes": "Attributes",
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "dueDate": "Due date",
+      "project": "Project",
+      "labels": "Labels",
+      "pullRequest": "Pull Request",
+      "noPullRequest": "No linked PR yet. Reference this issue's identifier in a PR's branch name, title, or body to link automatically.",
+      "metadata": "Metadata",
+      "creator": "Creator",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "agentStats": "Agent stats",
+      "inputTokens": "Input",
+      "outputTokens": "Output",
+      "cacheTokens": "Cache",
+      "runs": "Runs",
+      "unassigned": "Unassigned",
+      "unknown": "Unknown"
+    },
+    "fullscreen": {
+      "enter": "Enter fullscreen",
+      "exit": "Exit fullscreen"
+    },
+    "placeholders": {
+      "loading": "Loading…",
+      "noDescription": "No description.",
+      "unassigned": "Unassigned",
+      "unknown": "Unknown"
+    }
+  },
+  "issueStatus": {
+    "backlog": "Backlog",
+    "todo": "Todo",
+    "in_progress": "In Progress",
+    "in_review": "In Review",
+    "done": "Done",
+    "blocked": "Blocked",
+    "cancelled": "Cancelled"
+  },
+  "labels": {
+    "picker": {
+      "addButton": "+ Label",
+      "newLabelName": "New label name",
+      "newLabelColor": "New label color",
+      "addAction": "Add"
+    }
+  },
+  "pins": {
+    "heading": "Pinned",
+    "unpin": "Unpin",
+    "pinToSidebar": "Pin to sidebar"
+  },
+  "skills": {
+    "noSkillsYet": "No skills yet",
+    "noSkillsHint": "Skills appear here as your agents discover reusable knowledge during tasks.",
+    "generatedByAgent": "generated by agent"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "filterAll": "All severities",
+    "filterActionRequired": "Action required",
+    "filterAttention": "Attention",
+    "filterInfo": "Info",
+    "empty": "All caught up!",
+    "emptySubtitle": "No notifications yet.",
+    "unreadCount": "{count} unread",
+    "ariaActions": "Inbox actions",
+    "markAllAsRead": "Mark all as read",
+    "archiveRead": "Archive read",
+    "archiveAll": "Archive all",
+    "archiveFailed": "Failed to archive",
+    "emptyMain": "Your inbox is empty",
+    "selectNotification": "Select a notification"
+  }
+}

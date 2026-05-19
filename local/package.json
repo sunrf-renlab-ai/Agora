@@ -1,0 +1,24 @@
+{
+  "name": "@agora/daemon",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "bin": { "agorad": "./src/index.ts" },
+  "scripts": {
+    "dev": "bun run --watch src/index.ts daemon start",
+    "start": "bun run src/index.ts daemon start",
+    "build:bin": "bun build src/index.ts --compile --target=bun-darwin-arm64 --outfile dist/agorad-darwin-arm64 && bun build src/index.ts --compile --target=bun-darwin-x64 --outfile dist/agorad-darwin-x64 && bun build src/index.ts --compile --target=bun-linux-x64 --outfile dist/agorad-linux-x64",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agora/shared": "workspace:*",
+    "commander": "^12.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/ws": "^8.5.13",
+    "typescript": "^5.7.3"
+  }
+}

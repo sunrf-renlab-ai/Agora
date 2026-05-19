@@ -1,0 +1,3 @@
+ALTER TABLE "workspace_knowledge_doc" ADD COLUMN "project_id" uuid;--> statement-breakpoint
+ALTER TABLE "workspace_knowledge_doc" ADD CONSTRAINT "workspace_knowledge_doc_project_id_project_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."project"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "idx_kb_workspace_project" ON "workspace_knowledge_doc" USING btree ("workspace_id","project_id","updated_at");

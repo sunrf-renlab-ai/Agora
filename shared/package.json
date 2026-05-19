@@ -1,0 +1,16 @@
+{
+  "name": "@agora/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "liquidjs": "^10.25.7",
+    "zod": "^3.24.2"
+  }
+}

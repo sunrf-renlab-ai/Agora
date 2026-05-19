@@ -1,0 +1,74 @@
+name: release-cli-binaries
+
+# Build the agorad binaries and publish them as assets on a single "latest"
+# prerelease. install.sh has a fallback path that tries this URL when the
+# primary (Vercel-fronted Render) is unreachable — e.g. for users on networks
+# where Vercel's edge IPs are flaky.
+#
+# The "latest" release is recreated on every push to master so the asset
+# URLs are stable: github.com/{owner}/{repo}/releases/download/latest/agorad-...
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # required to create / delete / upload to releases
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - run: bun install --frozen-lockfile
+
+      - name: cross-compile darwin + linux + windows binaries
+        run: |
+          cd local
+          bun build src/index.ts --compile --target=bun-darwin-arm64 --outfile dist/agorad-darwin-arm64
+          bun build src/index.ts --compile --target=bun-darwin-x64 --outfile dist/agorad-darwin-x64
+          bun build src/index.ts --compile --target=bun-linux-x64 --outfile dist/agorad-linux-x64
+          # NOTE: We deliberately do NOT pass --windows-hide-console here.
+          # As of Bun 1.3.13 that flag is only available when the COMPILER
+          # itself runs on Windows ("Using --windows-hide-console is only
+          # available when compiling on Windows"), so attempting it from
+          # the ubuntu-latest runner aborts the whole build. The trade-off
+          # is a console window briefly flashing on AtLogon when the
+          # daemon launches as a Task Scheduler job — install.ps1 should
+          # wrap the /TR with `cmd /c start /B` to detach when we want to
+          # eliminate the flash. For v1 it's tolerable.
+          bun build src/index.ts --compile --target=bun-windows-x64 --outfile dist/agorad-windows-x64.exe
+
+      - name: gzip for transport
+        run: |
+          cd local/dist
+          gzip -9 -k agorad-darwin-arm64
+          gzip -9 -k agorad-darwin-x64
+          gzip -9 -k agorad-linux-x64
+          gzip -9 -k agorad-windows-x64.exe
+          ls -lh
+
+      - name: replace "latest" prerelease
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Wipe and re-create so asset URLs stay at /releases/download/latest/*.
+          # `--yes` suppresses the confirmation. Failure is fine on first run
+          # when no release exists yet.
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+          gh release create latest \
+            --prerelease \
+            --title "Latest CLI binaries (master)" \
+            --notes "Auto-built on push to master. install.sh falls back here when the primary Vercel-fronted download is unreachable. Bypass Vercel entirely with: curl -fsSL https://github.com/sunrf-renlab-ai/Agora/releases/download/latest/install.sh | bash" \
+            --target ${{ github.sha }} \
+            local/dist/agorad-darwin-arm64.gz \
+            local/dist/agorad-darwin-x64.gz \
+            local/dist/agorad-linux-x64.gz \
+            local/dist/agorad-windows-x64.exe.gz \
+            scripts/install.sh \
+            scripts/install.ps1

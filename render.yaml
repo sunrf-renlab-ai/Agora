@@ -1,0 +1,70 @@
+# Render Blueprint for the agora server.
+#
+# ==============================================================
+#  GOTCHA — read before clicking Apply
+# ==============================================================
+#  After Apply: ALWAYS verify env vars actually saved.
+#  Service → Environment → click Edit on each `sync: false` row and
+#  confirm a non-empty value. Render Blueprint apply has a known bug
+#  where typed-in values silently fail to persist; the service then
+#  builds with EMPTY env and crashes at boot ("missing DATABASE_URL",
+#  etc.). If any field is empty, paste the value, click
+#  "Save, rebuild, and deploy". See DEPLOY.md > Gotchas.
+# ==============================================================
+#
+# How to use: in the Render dashboard, click "New +" → "Blueprint" and
+# point it at this repo. Render reads this file, creates the service,
+# and lets you fill in the `sync: false` secrets in the UI before the
+# first deploy.
+#
+# Free tier notes:
+# - `plan: free` is a 512 MB / 0.1 CPU container that sleeps after 15
+#   minutes of inactivity. First request after sleep takes ~30s to wake.
+#   .github/workflows/keep-render-warm.yml pings /healthz every 13 min
+#   to keep it warm.
+# - /healthz is hit periodically by Render; the server already exposes
+#   it (see server/src/routes/health.ts).
+# - Deploy hook URL (Settings → Deploy Hook) goes into the
+#   RENDER_DEPLOY_HOOK GitHub secret for the deploy.yml workflow.
+
+services:
+  - type: web
+    name: agora-server
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      # Code reads `process.env.TASK_JWT_SECRET` (server/src/middleware/auth.ts);
+      # `JWT_SECRET` was the prior name and was unused by the runtime — anyone
+      # reading the repo could mint a valid task JWT against the dev fallback.
+      # MUST be set in Render: Environment → Edit → Add variable, 32+ random bytes.
+      - key: TASK_JWT_SECRET
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: APP_URL
+        sync: false
+      # Used by server/src/routes/members.ts to render `<origin>/invite/<token>`
+      # in invitation emails. If unset, invite links come out as
+      # `undefined/invite/...`. Set to the Vercel web origin.
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: AUTOPILOT_SCHEDULER
+        value: "on"
+      - key: RUNTIME_MONITOR
+        value: "on"

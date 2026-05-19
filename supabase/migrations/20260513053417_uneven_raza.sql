@@ -1,0 +1,1 @@
+ALTER TABLE "agent" ADD COLUMN "prompt_templates" jsonb DEFAULT '{}'::jsonb NOT NULL;

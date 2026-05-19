@@ -1,0 +1,348 @@
+{
+  "runtimes": {
+    "backToList": "返回 Runtime 列表",
+    "detail": {
+      "notFound": "找不到该 Runtime",
+      "header": {
+        "online": "在线",
+        "offline": "离线",
+        "lastSeen": "最后活跃",
+        "version": "版本"
+      },
+      "status": {
+        "title": "状态",
+        "detectedClis": "检测到的 CLI",
+        "models": "模型",
+        "machine": "机器"
+      },
+      "agents": {
+        "title": "使用此 Runtime 的 Agent",
+        "empty": "暂无",
+        "concurrentTasks": "并发任务"
+      },
+      "activity": {
+        "title": "活动记录",
+        "empty": "暂无活动"
+      },
+      "usage": {
+        "title": "使用量",
+        "empty": "暂无数据"
+      }
+    }
+  },
+  "login": {
+    "eyebrow": "团队协作",
+    "tagline": "每个人把自己的 AI 接进同一个工作区",
+    "subtitle": "接入你已经在用的 AI CLI —— Claude、Codex、Gemini、OpenClaw、Hermes。",
+    "featureByoAi": "接入自己的 AI",
+    "featureOneBoard": "人与 AI 同板",
+    "featureScope": "Issue · 项目 · 自动化",
+    "inviteBanner": "你被邀请加入一个工作区。登录或注册后，我们会带你前往邀请页面。",
+    "srHeading": "登录",
+    "emailPlaceholder": "邮箱",
+    "passwordPlaceholder": "密码",
+    "continue": "继续",
+    "loading": "加载中…",
+    "autoCreateHint": "新邮箱？我们会自动为你创建账户。"
+  },
+  "sidebar": {
+    "home": "与智能体对话",
+    "inbox": "收件箱",
+    "myIssues": "我的 Issue",
+    "pinned": "固定",
+    "workspace": "工作区",
+    "config": "配置",
+    "issues": "Issue",
+    "knowledge": "知识库",
+    "projects": "项目",
+    "autopilots": "自动化",
+    "agents": "智能体",
+    "runtimes": "运行时",
+    "skills": "Skill",
+    "settings": "设置",
+    "help": "帮助",
+    "createWorkspace": "创建工作区",
+    "switchWorkspace": "搜索工作区…"
+  },
+  "issues": {
+    "title": "Issue",
+    "myTitle": "我的 Issue",
+    "new": "+ 新建 issue",
+    "noneYet": "还没有 issue",
+    "createFirst": "创建第一个 issue 开始吧。",
+    "createCta": "创建 issue",
+    "noneAssigned": "没有指派给你的 issue",
+    "scopeAll": "全部",
+    "scopeMember": "成员",
+    "scopeAgent": "智能体",
+    "filters": {
+      "status": "状态",
+      "priority": "优先级",
+      "assignee": "指派给",
+      "project": "项目",
+      "labels": "标签",
+      "clearAll": "清除筛选"
+    },
+    "batch": {
+      "selectedCount": "已选 {count} 项",
+      "status": "修改状态",
+      "priority": "修改优先级",
+      "assignee": "重新指派",
+      "delete": "删除",
+      "clear": "清除",
+      "cancel": "取消",
+      "deleteConfirm": "确认删除选中的 {count} 个 issue 吗？",
+      "updated": "已更新 {count} 个 issue",
+      "updateFailed": "更新失败",
+      "deleted": "已删除 {count} 个 issue",
+      "deleteFailed": "删除失败"
+    },
+    "executionLogs": {
+      "title": "执行记录",
+      "empty": "尚无执行记录",
+      "expand": "展开",
+      "collapse": "收起",
+      "started": "开始",
+      "finished": "结束",
+      "inProgress": "进行中",
+      "noDetailedLogs": "暂无详细日志",
+      "messagesLoading": "正在加载消息…",
+      "messagesEmpty": "此次运行未记录到智能体消息。",
+      "messagesEmptyRunning": "等待智能体输出首条消息…",
+      "replyAffordance": "回复",
+      "replyPlaceholder": "继续对 {agent} 说…（⌘↵ 发送)",
+      "replySend": "发送",
+      "rerun": "重新运行",
+      "status": {
+        "queued": "已入队",
+        "dispatched": "已派发",
+        "running": "运行中",
+        "completed": "已完成",
+        "failed": "失败",
+        "cancelled": "已取消"
+      },
+      "triggers": {
+        "assignee": "指派触发",
+        "mention": "@提及触发",
+        "on_comment": "评论触发",
+        "rerun": "重跑",
+        "quick_create": "快速创建",
+        "autopilot": "自动化",
+        "other": "其他"
+      },
+      "error": {
+        "title": "错误"
+      }
+    }
+  },
+  "createDialog": {
+    "title": "创建 Issue",
+    "ai": "智能体",
+    "manual": "手动",
+    "switchAi": "切换到智能体",
+    "switchManual": "切换到手动",
+    "createdBy": "创建者",
+    "describeAgent": "告诉智能体要做什么",
+    "describePlaceholder": "告诉智能体要做什么…",
+    "issueTitle": "Issue 标题",
+    "description": "描述",
+    "descriptionPlaceholder": "描述（可选）",
+    "status": "状态",
+    "priority": "优先级",
+    "attachFiles": "+ 附加文件",
+    "removeFile": "删除 {name}",
+    "keepOpen": "提交后保持打开",
+    "submitHint": "⌘↵ 提交",
+    "cancel": "取消",
+    "create": "创建",
+    "sending": "发送中…",
+    "uploading": "上传中…",
+    "uploadFailed": "上传失败：{name}",
+    "createFailed": "创建 issue 失败",
+    "noAgents": "未找到可用智能体。请切换到手动或先创建智能体。",
+    "agentSuccess": "智能体正在处理 — issue 即将出现",
+    "ariaCreateWithAgent": "用智能体创建",
+    "ariaCreateIssue": "创建 issue",
+    "ariaCollapse": "收起",
+    "ariaExpand": "展开",
+    "ariaClose": "关闭",
+    "ariaRemoveParent": "移除父 issue",
+    "ariaRemoveSubIssue": "移除子 issue {label}",
+    "ariaMoreOptions": "更多选项",
+    "workspace": "工作区",
+    "createManually": "手动创建",
+    "createWithAgent": "用智能体创建",
+    "descriptionPlaceholderManual": "添加描述…（支持 Markdown）",
+    "agentPromptPlaceholder": "告诉智能体要做什么，例如\"修复 Web 项目里收件箱加载慢的问题\"",
+    "subIssueOf": "{parent} 的子 issue",
+    "subIssueLabel": "子 issue：{label}",
+    "changeParent": "更改父 issue…",
+    "setParentIssue": "设置父 issue…",
+    "addSubIssue": "添加子 issue…",
+    "createAnother": "继续创建",
+    "creating": "创建中…",
+    "createIssueButton": "创建 Issue",
+    "setParentTitle": "设置父 issue",
+    "setParentDescription": "搜索一个 issue 作为父级",
+    "addSubIssueTitle": "添加子 issue",
+    "addSubIssueDescription": "搜索一个 issue 作为子级",
+    "linkSubIssuesFailed": "关联子 issue 失败",
+    "linkSomeSubIssuesFailed": "关联 {total} 个子 issue 中的 {failed} 个失败",
+    "issueCreated": "Issue 已创建",
+    "viewIssue": "查看 issue →",
+    "pickAgent": "选择智能体…",
+    "noAgentsShort": "没有可用的智能体。请连接守护进程后再来。",
+    "agentSentToast": "已发送给智能体。完成后会收到收件箱通知。",
+    "submitFailedRetry": "提交失败，请重试。"
+  },
+  "comments": {
+    "input": {
+      "placeholder": "添加评论...",
+      "submit": "评论",
+      "cancel": "取消",
+      "attachFile": "添加附件",
+      "mention": {
+        "member": "成员",
+        "agent": "智能体",
+        "issue": "Issues"
+      }
+    }
+  },
+  "settings": {
+    "language": "语言",
+    "english": "English",
+    "chinese": "中文",
+    "title": "设置",
+    "profile": "个人资料",
+    "notifications": "通知",
+    "tokens": "令牌",
+    "feedback": "反馈",
+    "members": "工作区成员",
+    "email": "邮箱",
+    "name": "姓名",
+    "avatarUrl": "头像 URL",
+    "save": "保存更改",
+    "connections": "数据源连接"
+  },
+  "issueDetail": {
+    "backToIssues": "← 返回 Issues",
+    "sidebarHeading": "属性",
+    "fields": {
+      "status": "状态",
+      "priority": "优先级",
+      "assignee": "指派给",
+      "creator": "创建者",
+      "created": "创建于",
+      "labels": "标签"
+    },
+    "addLabel": "+ 添加标签",
+    "pinToSidebar": "固定到侧栏",
+    "dependencies": {
+      "title": "依赖关系",
+      "blocks": "阻塞",
+      "blockedBy": "被阻塞",
+      "related": "相关",
+      "none": "无",
+      "pickIssue": "— 选择 issue —",
+      "add": "添加",
+      "addLink": "添加依赖关系",
+      "cancel": "取消"
+    },
+    "attachments": "附件",
+    "attachmentList": {
+      "chooseFiles": "选择文件",
+      "orDropHere": "或拖放到此处"
+    },
+    "tabs": {
+      "comments": "评论（{count}）",
+      "activity": "动态（{count}）",
+      "executionLogs": "执行记录"
+    },
+    "timeline": {
+      "title": "动态"
+    },
+    "subscribe": {
+      "subscribed": "已订阅",
+      "unsubscribed": "已取消订阅",
+      "failed": "更新订阅失败",
+      "toggleAriaSubscribe": "订阅更新",
+      "toggleAriaUnsubscribe": "取消订阅"
+    },
+    "properties": {
+      "attributes": "属性",
+      "status": "状态",
+      "priority": "优先级",
+      "assignee": "负责人",
+      "dueDate": "截止日期",
+      "project": "项目",
+      "labels": "标签",
+      "pullRequest": "Pull Request",
+      "noPullRequest": "还没有关联的 PR。在 PR 的分支名、标题或正文里引用本 issue 的 identifier 即可自动关联。",
+      "metadata": "元信息",
+      "creator": "创建者",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间",
+      "agentStats": "Agent 统计",
+      "inputTokens": "输入",
+      "outputTokens": "输出",
+      "cacheTokens": "缓存",
+      "runs": "运行次数",
+      "unassigned": "未指派",
+      "unknown": "未知"
+    },
+    "fullscreen": {
+      "enter": "进入全屏",
+      "exit": "退出全屏"
+    },
+    "placeholders": {
+      "loading": "加载中…",
+      "noDescription": "无描述。",
+      "unassigned": "未指派",
+      "unknown": "未知"
+    }
+  },
+  "issueStatus": {
+    "backlog": "待办",
+    "todo": "待处理",
+    "in_progress": "进行中",
+    "in_review": "审查中",
+    "done": "已完成",
+    "blocked": "阻塞",
+    "cancelled": "已取消"
+  },
+  "labels": {
+    "picker": {
+      "addButton": "+ 标签",
+      "newLabelName": "新标签名",
+      "newLabelColor": "新标签颜色",
+      "addAction": "添加"
+    }
+  },
+  "pins": {
+    "heading": "固定",
+    "unpin": "取消固定",
+    "pinToSidebar": "固定到侧栏"
+  },
+  "skills": {
+    "noSkillsYet": "还没有 skill",
+    "noSkillsHint": "当智能体在任务中沉淀可复用知识时，skill 会出现在这里。",
+    "generatedByAgent": "智能体生成"
+  },
+  "inbox": {
+    "title": "收件箱",
+    "filterAll": "全部",
+    "filterActionRequired": "需要处理",
+    "filterAttention": "注意",
+    "filterInfo": "信息",
+    "empty": "都看完啦！",
+    "emptySubtitle": "暂无通知。",
+    "unreadCount": "{count} 条未读",
+    "ariaActions": "收件箱操作",
+    "markAllAsRead": "全部标为已读",
+    "archiveRead": "归档已读",
+    "archiveAll": "全部归档",
+    "archiveFailed": "归档失败",
+    "emptyMain": "收件箱为空",
+    "selectNotification": "选择一条通知"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1778069040458,
+      "tag": "20260506120400_bent_thunderbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778069413217,
+      "tag": "20260506121013_perpetual_longshot",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778100000000,
+      "tag": "20260507020933_phase3_agent_execution",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1778124227941,
+      "tag": "20260507032347_phase4_autopilot",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1778126082505,
+      "tag": "20260507035442_phase5_chat",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778136421948,
+      "tag": "20260507064701_phase6_project_skill",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778139761193,
+      "tag": "20260507074241_phase7_issue_extras",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1778141583318,
+      "tag": "20260507081303_phase8_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1778472952996,
+      "tag": "20260511041552_light_wolfpack",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1778489705248,
+      "tag": "20260511085505_drop_dup_task_msg_idx",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1778494243432,
+      "tag": "20260511101043_drop_task_message_workspace_id",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1778649979736,
+      "tag": "20260513052619_chilly_sally_floyd",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1778650457846,
+      "tag": "20260513053417_uneven_raza",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1778664671908,
+      "tag": "20260513093111_mean_shooting_star",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1778724232863,
+      "tag": "20260514020352_dashing_magik",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1778787600000,
+      "tag": "20260514120000_skill_public_visibility",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1778791200000,
+      "tag": "20260514130000_local_skill_import_visibility",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1778744505069,
+      "tag": "20260514074145_premium_mordo",
+      "breakpoints": true
+    }
+  ]
+}

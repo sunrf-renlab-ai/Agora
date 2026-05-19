@@ -1,0 +1,67 @@
+#!/usr/bin/env bun
+import { Command } from "commander";
+import { activityCmd } from "./cmd-activity";
+import { agentCmd } from "./cmd-agent";
+import { attachmentCmd } from "./cmd-attachment";
+import { autopilotCmd } from "./cmd-autopilot";
+import { chatCmd } from "./cmd-chat";
+import { commentCmd } from "./cmd-comment";
+import { configCmd } from "./cmd-config";
+import { connectionCmd } from "./cmd-connection";
+import { dependencyCmd } from "./cmd-dependency";
+import { feedbackCmd } from "./cmd-feedback";
+import { inboxCmd } from "./cmd-inbox";
+import { invitationCmd } from "./cmd-invitation";
+import { issueCmd } from "./cmd-issue";
+import { knowledgeCmd } from "./cmd-knowledge";
+import { labelCmd } from "./cmd-label";
+import { loginCmd } from "./cmd-login";
+import { meCmd } from "./cmd-me";
+import { memberCmd } from "./cmd-member";
+import { notifCmd } from "./cmd-notif";
+import { patCmd } from "./cmd-pat";
+import { pinCmd } from "./cmd-pin";
+import { projectCmd } from "./cmd-project";
+import { reactionCmd } from "./cmd-reaction";
+import { runsCmd } from "./cmd-runs";
+import { runtimeCmd } from "./cmd-runtime";
+import { skillCmd } from "./cmd-skill";
+import { subscriberCmd } from "./cmd-subscriber";
+import { versionCmd } from "./cmd-version";
+import { workspaceCmd } from "./cmd-workspace";
+
+const program = new Command();
+program.name("agora").description("Agora CLI for agents and humans").version("0.0.1");
+
+issueCmd.addCommand(commentCmd);
+issueCmd.addCommand(subscriberCmd);
+
+program.addCommand(issueCmd);
+program.addCommand(agentCmd);
+program.addCommand(labelCmd);
+program.addCommand(runsCmd);
+program.addCommand(skillCmd);
+program.addCommand(knowledgeCmd);
+program.addCommand(workspaceCmd);
+program.addCommand(attachmentCmd);
+program.addCommand(projectCmd);
+program.addCommand(dependencyCmd);
+program.addCommand(pinCmd);
+program.addCommand(activityCmd);
+program.addCommand(meCmd);
+program.addCommand(inboxCmd);
+program.addCommand(runtimeCmd);
+program.addCommand(autopilotCmd);
+program.addCommand(memberCmd);
+program.addCommand(invitationCmd);
+program.addCommand(patCmd);
+program.addCommand(feedbackCmd);
+program.addCommand(notifCmd);
+program.addCommand(connectionCmd);
+program.addCommand(chatCmd);
+program.addCommand(reactionCmd);
+program.addCommand(versionCmd);
+program.addCommand(loginCmd);
+program.addCommand(configCmd);
+
+await program.parseAsync(process.argv);

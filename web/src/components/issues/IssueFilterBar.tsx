@@ -74,7 +74,7 @@ export function IssueFilterBar({ token, workspaceId, filters, onChange }: Props)
   }
 
   return (
-    <div className="flex items-center gap-2 px-8 py-2 border-b border-gray-200 flex-wrap">
+    <div className="flex items-center gap-2 px-8 pt-3 pb-2 flex-wrap">
       {/* Status */}
       <FilterPill
         label={t("filters.status")}

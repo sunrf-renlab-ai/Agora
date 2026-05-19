@@ -195,7 +195,7 @@ export function KanbanBoard({ issues, workspaceSlug, token, workspaceId }: Props
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
+      <div className="flex items-center justify-between px-8 py-2 border-b border-gray-200">
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <span>Group by</span>
           <div className="inline-flex items-center bg-gray-100 rounded-md p-0.5">
@@ -233,7 +233,7 @@ export function KanbanBoard({ issues, workspaceSlug, token, workspaceId }: Props
         )}
       </div>
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex gap-3 p-4 flex-1 overflow-x-auto">
+        <div className="flex gap-3 px-8 py-4 flex-1 overflow-x-auto">
           {columns.map((col) => {
             const colIssues = grouped.get(col.key) ?? [];
             return (
@@ -285,9 +285,7 @@ function KanbanColumn({
     <div
       ref={setNodeRef}
       className={`flex flex-col w-72 shrink-0 rounded-lg p-2.5 transition-colors ${
-        isOver
-          ? "bg-indigo-50/60 ring-1 ring-inset ring-indigo-200"
-          : "bg-gray-100/60"
+        isOver ? "bg-indigo-50/60 ring-1 ring-inset ring-indigo-200" : "bg-gray-100/60"
       }`}
     >
       <div className="flex items-center gap-2 px-1.5 pb-2.5 mb-1.5 border-b border-gray-200/70">

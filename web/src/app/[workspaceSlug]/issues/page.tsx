@@ -98,8 +98,7 @@ export default function IssuesPage({
 
   // Filter state synced with URL search params so links are shareable.
   const filters = useMemo<IssueFilters>(() => {
-    const parseList = (k: string) =>
-      searchParams.get(k)?.split(",").filter(Boolean) ?? [];
+    const parseList = (k: string) => searchParams.get(k)?.split(",").filter(Boolean) ?? [];
     return {
       status: parseList("status") as IssueFilters["status"],
       priority: parseList("priority") as IssueFilters["priority"],
@@ -190,12 +189,11 @@ export default function IssuesPage({
     router.replace(`/${workspaceSlug}/issues?${sp.toString()}`);
   }
 
-  const SCOPE_TABS: { value: IssueScope; labelKey: "scopeAll" | "scopeMember" | "scopeAgent" }[] =
-    [
-      { value: "all", labelKey: "scopeAll" },
-      { value: "member", labelKey: "scopeMember" },
-      { value: "agent", labelKey: "scopeAgent" },
-    ];
+  const SCOPE_TABS: { value: IssueScope; labelKey: "scopeAll" | "scopeMember" | "scopeAgent" }[] = [
+    { value: "all", labelKey: "scopeAll" },
+    { value: "member", labelKey: "scopeMember" },
+    { value: "agent", labelKey: "scopeAgent" },
+  ];
 
   return (
     <div className="flex flex-col h-full">
@@ -209,14 +207,12 @@ export default function IssuesPage({
       </div>
 
       {view !== "graph" && (
-        <div className="px-8 py-2 border-b border-gray-200">
-          <IssueFilterBar
-            token={token}
-            workspaceId={workspaceId}
-            filters={filters}
-            onChange={setFilters}
-          />
-        </div>
+        <IssueFilterBar
+          token={token}
+          workspaceId={workspaceId}
+          filters={filters}
+          onChange={setFilters}
+        />
       )}
 
       <div className="flex items-center gap-1 px-8 py-2 border-b border-gray-200">

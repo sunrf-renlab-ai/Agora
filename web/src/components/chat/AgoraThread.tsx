@@ -8,6 +8,7 @@ import {
   useMessage,
 } from "@assistant-ui/react";
 import { AlertCircle, ArrowUp, Square, Wrench } from "lucide-react";
+import Link from "next/link";
 import { useMemo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -293,6 +294,12 @@ function summarizeToolInput(name: string, input: unknown): string {
   return oneLine.length > 80 ? `${oneLine.slice(0, 77)}…` : oneLine;
 }
 
+// Matches the issue detail route — `/<workspaceSlug>/issues/<uuid>` — so
+// the markdown renderer can promote those links to clickable issue chips
+// instead of plain underlines.
+const ISSUE_HREF_RE =
+  /^\/[^/]+\/issues\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /**
  * Tailwind has no typography plugin wired in, so `prose` is a no-op and
  * Preflight flattens headings/lists. Style every markdown element
@@ -315,11 +322,37 @@ const mdComponents: Components = {
   li: ({ children }) => <li className="leading-relaxed">{children}</li>,
   strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
   em: ({ children }) => <em className="italic">{children}</em>,
-  a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noreferrer" className="text-indigo-700 hover:underline">
-      {children}
-    </a>
-  ),
+  a: ({ href, children }) => {
+    // Links that target an issue detail page are rendered as a clickable
+    // chip — identifier in serif italic, title in body weight — so the
+    // agent's reply visually distinguishes "the work I filed" from prose.
+    if (typeof href === "string" && ISSUE_HREF_RE.test(href)) {
+      const text = typeof children === "string" ? children : "";
+      const m = /^([A-Z][A-Z0-9]*-\d+)\s*[·:—\-]\s*(.+)$/.exec(text.trim());
+      return (
+        <Link
+          href={href}
+          className="inline-flex items-center align-middle gap-1.5 rounded-sm border border-gray-200 bg-gray-50 px-2 py-0.5 text-[12.5px] text-gray-900 no-underline hover:border-gray-300 hover:bg-white transition-colors"
+        >
+          {m ? (
+            <>
+              <span className="font-display italic text-[11px] text-gray-400 tabular-nums">
+                {m[1]}
+              </span>
+              <span>{m[2]}</span>
+            </>
+          ) : (
+            <span>{children}</span>
+          )}
+        </Link>
+      );
+    }
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className="text-indigo-700 hover:underline">
+        {children}
+      </a>
+    );
+  },
   code: ({ className, children }) =>
     className ? (
       <code className="font-mono text-[12.5px]">{children}</code>
